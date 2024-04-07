@@ -81,10 +81,10 @@ Test Tool：Postman、K6
 ## 評分
 ### 正確性
 #### Create Ad API
-![](https://drive.google.com/u/2/uc?id=1-pHxbc3RTxw7gkE_gMajbxzqsNYGpK4Y&export=download)
+![](https://drive.google.com/u/2/uc?id=1-9VNPVNlSoJyfplCTGNAfDwy-9EyjnKg&export=download)
 
 #### Get Ad API
-![](https://drive.google.com/u/2/uc?id=1XiKziJ1ZjAXyIEDq0IRWTTK3TTLk8EF4&export=download)
+![](https://drive.google.com/u/2/uc?id=1-iXcWo5bkADwOPhX1waeDy2hCVNpuzwz&export=download)
 
 ### 效能
 ![](https://drive.google.com/u/2/uc?id=1QJ0NhvC9rVzvBMOTSc6eFeweoddzr9WQ&export=download)
@@ -105,5 +105,16 @@ Test Tool：Postman、K6
 - Util 額外共用程式碼
 
 ### 測試
-- 以 http status 200 與 400 錯誤為主要測試項目，確保程式碼在功能正確性上沒問題
+- 以商業邏輯為主的測試，因此主要注重在使用者正常使用的情況下，是否有正確的回傳 Http Status 200與400
+- Http Status 500 理論上是使用者操作不出來的，多數是相關服務出現錯誤，因此不在測試的重點範圍內
+
+#### Create Ad API
+- 測試參數全部為合法值，正常回傳
+- 測試 Gender 值不在合法範圍內，是否有回傳錯誤
+- 測試 Country 值不在合法範圍內，是否有回傳錯誤
+- 測試 Platform 值不在合法範圍內，是否有回傳錯誤
+- 測試 EndAt 日期在 StartAt之前，是否有回傳錯誤
+
+#### Get Ad API
+- 測試參數全部為合法值，正常回傳
 
