@@ -2,10 +2,66 @@
 
 ## 設計
 ### 基礎架構
-![](https://drive.google.com/u/2/uc?id=1Cw_rFg_RnuDN9NGBNc1CjMUgiXufEwJJ&export=download)
-### 流程
+![](https://drive.google.com/u/2/uc?id=1BrIZw3UwW3FRL8eU_FvTH2DHUpOlvQAK&export=download)
+### ER Model
+![](https://drive.google.com/u/2/uc?id=1w4b1ztXmgL8KP7mh-rYxCmAmJhJ05OSD&export=download)
+- 熱門緩存資料雖違反正規化，但在廣告資料資料眾多時，因主要侷限範圍都在熱門緩存資料表，而筆數又是固定，查詢速度將不會随之增加
 
-![](https://drive.google.com/u/2/uc?id=1N0rsANCv-qSmgTzkoI0LiwugCATkca3R&export=download)
+#### Ad Table
+存放廣告資料
+| Field    | Description            |
+|----------|------------------------|
+| id       | 主鍵，自增碼            |
+| title    | 廣告標題 |
+| startAt  | 廣告投放起始日 |
+| endAt    | 廣告投放截止日 |
+
+#### AdCondition
+存放廣告投放條件
+| Field     | Description                            |
+|-----------|----------------------------------------|
+| id        | 主鍵，自增碼                          |
+| age_start | 年齡起始值，大於等於此值的用戶將符合條件 |
+| age_end   | 年齡結束值，小於等於此值的用戶將符合條件 |
+| gender    | 用戶性別，可能的值有男性、女性   |
+| country   | 用戶所在國家，以兩個字母的代碼表示       |
+| platform  | 用戶設備平台，可能的值有Android、IOS等  |
+| ad_id     | 廣告ID，對應到廣告表中的ID               |
+
+#### HotAd
+存放熱門廣告資料
+| Field     | Description                            |
+|-----------|----------------------------------------|
+| id        | 主鍵，自增碼                          |
+| title     | 廣告標題                               |
+| startAt   | 廣告投放起始日                         |
+| endAt     | 廣告投放截止日                         |
+| ad_id     | 廣告ID，對應到廣告表中的ID            |
+
+#### HotAd
+存放熱門廣告投放條件資料
+| Field           | Description                            |
+|-----------------|----------------------------------------|
+| id              | 主鍵，自增碼                          |
+| age_start       | 年齡起始值，大於等於此值的用戶將符合條件 |
+| age_end         | 年齡結束值，小於等於此值的用戶將符合條件 |
+| gender          | 用戶性別，可能的值有男性、女性   |
+| country         | 用戶所在國家，以兩個字母的代碼表示       |
+| platform        | 用戶設備平台，可能的值有Android、IOS等  |
+| hot_ad_id       | 熱門廣告ID，對應到熱門廣告表中的ID       |
+| ad_condition_id | 廣告條件ID，對應到廣告條件表中的ID       |
+
+
+### 流程
+#### Create Ad API 流程
+![](https://drive.google.com/u/2/uc?id=14mH75y8GhZ7yUPkL5iPT2SSE_50yLcWP&export=download)
+- 檢查資料合法性
+- 將資料寫入 Ad 與  AdCondition 表
+- 若有錯誤則透過事務 Rollback
+#### Get Ad API 流程
+<p align="center">
+    <img src="https://drive.google.com/u/2/uc?id=1N0rsANCv-qSmgTzkoI0LiwugCATkca3R&export=download" />
+</p>
 - Eager Loading 將活躍廣告寫入至 hot data table 供後續資料庫查詢使用
 - 因題目無特別要求，因此此處忽略當天投放的廣告，廣告投放後隔天才會生效，此限制能大幅提升緩存效果
 - 因不在 API 的範圍此流程為示意使用
@@ -23,4 +79,22 @@
 
 #### Get Ad API
 ![](https://drive.google.com/u/2/uc?id=1XiKziJ1ZjAXyIEDq0IRWTTK3TTLk8EF4&export=download)
+
+### 效能
+![](https://drive.google.com/u/2/uc?id=1QJ0NhvC9rVzvBMOTSc6eFeweoddzr9WQ&export=download)
+- 以資料已熱加載為前提，個人電腦處理的處理量達6500/s
+- 使用生產環境的計算能力依規格是有機會單台突破10000/s
+- Local Memory 的 Cache若都被擊中，則 Server 之間的資源是獨立的，互不相影響，因此使用 Server Cluster，僅管生產環境的計算能力與個人電腦相同，也可很快破10000/s
+- 若 Server Cluster 的 Local Memory 沒被擊中，也有 redis 緩存，快速同步結果到Local Memory
+
+### 可讀性
+![](https://drive.google.com/u/2/uc?id=1zK3B142B8vftbr0p1A85Rd6o6CTMqvKN&export=download)
+
+多數實作風格方式是參考 Uncle Bob 相關書籍
+- package 以 by feature 設計，以模組為主建立資料夾，能快速清楚了解專案模組架構與藉由package來限制方法被存取的使用範圍
+- Handler 主要職責為分發工作
+- Converter 與外部交互的資料格式會由這一層處理
+- Service 主要處理邏輯
+- Dao 處理資料庫相關工作
+- Util 額外共用程式碼
 
