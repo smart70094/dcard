@@ -22,7 +22,7 @@ Test Tool：Postman、K6
 | startAt  | 廣告投放起始日 |
 | endAt    | 廣告投放截止日 |
 
-#### AdCondition
+#### AdCondition Table
 存放廣告投放條件
 | Field     | Description                            |
 |-----------|----------------------------------------|
@@ -34,7 +34,7 @@ Test Tool：Postman、K6
 | platform  | 用戶設備平台，可能的值有Android、IOS等  |
 | ad_id     | 廣告ID，對應到廣告表中的ID               |
 
-#### HotAd
+#### HotAd Table
 存放熱門廣告資料
 | Field     | Description                            |
 |-----------|----------------------------------------|
@@ -44,7 +44,7 @@ Test Tool：Postman、K6
 | endAt     | 廣告投放截止日                         |
 | ad_id     | 廣告ID，對應到廣告表中的ID            |
 
-#### HotAd
+#### HotAd Table
 存放熱門廣告投放條件資料
 | Field           | Description                            |
 |-----------------|----------------------------------------|
@@ -74,9 +74,9 @@ Test Tool：Postman、K6
 
 ![](https://drive.google.com/u/2/uc?id=1Gjsjsqsc5qafWmcReNUMRDQgzQiXJqC6&export=download)
 - 將請求的內容值依順序串接得到一組唯一值供後續查詢使用
-- 緩存設計為 Local Memory 與 Redis 緩存，透過唯一值存取
-- 考量緩存穿透問題，導致查詢請求都跑到資料庫，透過分散式鎖與有限度的自璇鎖來初始化Redis資料與等待初始化過程
-- 有限度的自璇鎖，每次等待時間會指數型增加分別為100、200、400，且會亂數加上0-100 ms
+- 緩存設計為 Local Memory 與 Redis 緩存，透過上述的唯一值存取
+- 考量緩存穿透問題，導致查詢請求都跑到資料庫，透過分散式鎖與有限度的自璇鎖來初始化Redis資料與等待初始化處理
+- 有限度的自璇鎖，每次等待時間會指數型增加分別為100、200、400ms，且會亂數加上0-100 ms
 
 ## 評分
 ### 正確性
@@ -88,7 +88,7 @@ Test Tool：Postman、K6
 
 ### 效能
 ![](https://drive.google.com/u/2/uc?id=1QJ0NhvC9rVzvBMOTSc6eFeweoddzr9WQ&export=download)
-- 以資料已熱加載為前提，個人電腦處理的處理量達6500/s
+- 以資料已熱加載為前提，個人電腦處理的處理量達6595/s
 - 使用生產環境的計算能力依規格是有機會單台突破10000/s
 - Local Memory 的 Cache若都被擊中，則 Server 之間的資源是獨立的，互不相影響，因此使用 Server Cluster，僅管生產環境的計算能力與個人電腦相同，也可很快破10000/s
 - 若 Server Cluster 的 Local Memory 沒被擊中，也有 redis 緩存，快速同步結果到Local Memory
