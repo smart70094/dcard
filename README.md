@@ -1,5 +1,11 @@
 # Dcard Ad API
 
+## 開發環境
+OS：Windows 10
+Database：PostgreSQL、Redis (由 Docker 管理)
+IDE：Goland
+Test Tool：Postman、K6
+
 ## 設計
 ### 基礎架構
 ![](https://drive.google.com/u/2/uc?id=1BrIZw3UwW3FRL8eU_FvTH2DHUpOlvQAK&export=download)
