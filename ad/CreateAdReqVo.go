@@ -17,19 +17,17 @@ const (
 	Web     Platform = "web"
 )
 
-type Country string
-
-const (
-	Taiwan  Country = "TW"
-	Japan   Country = "JP"
-	America Country = "US"
-)
+var CountryMap = map[string]bool{
+	"TW": true,
+	"JP": true,
+	"US": true,
+}
 
 type Condition struct {
 	AgeStart int8       `form:"ageStart" binding:"min=0,max=200"`
 	AgeEnd   int8       `form:"AgeEnd" binding:"min=0,max=200"`
 	Gender   []Gender   `form:"gender"`
-	Country  []Country  `form:"country"`
+	Country  []string   `form:"country"`
 	Platform []Platform `form:"platform"`
 }
 

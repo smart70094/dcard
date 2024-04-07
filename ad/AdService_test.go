@@ -15,7 +15,7 @@ func TestCreateAd_ValidParameters(t *testing.T) {
 				AgeStart: 18,
 				AgeEnd:   60,
 				Gender:   []Gender{Male, Female},
-				Country:  []Country{Taiwan},
+				Country:  []string{"TW"},
 				Platform: []Platform{Android, IOS},
 			},
 		},
@@ -34,6 +34,84 @@ func TestCreateAd_ValidParameters(t *testing.T) {
 	}
 }
 
+func TestCreateAd_GenderNotExists(t *testing.T) {
+	vo := CreateAdReqVo{
+		Title:   "Test Ad",
+		StartAt: time.Now(),
+		EndAt:   time.Now().Add(time.Hour * 24),
+		Conditions: []Condition{
+			{
+				AgeStart: 18,
+				AgeEnd:   60,
+				Gender:   []Gender{"S"},
+				Country:  []string{"TW"},
+				Platform: []Platform{Android, IOS},
+			},
+		},
+	}
+
+	code, errMsg, _ := createAd(vo)
+
+	if code != 400 {
+		t.Errorf("Expected code to be 400, got %d", code)
+	}
+	if errMsg != "value of Gender does not exist" {
+		t.Errorf("Expected errMsg to be value of Gender does not exist, got %s", errMsg)
+	}
+}
+
+func TestCreateAd_CountryNotExists(t *testing.T) {
+	vo := CreateAdReqVo{
+		Title:   "Test Ad",
+		StartAt: time.Now(),
+		EndAt:   time.Now().Add(time.Hour * 24),
+		Conditions: []Condition{
+			{
+				AgeStart: 18,
+				AgeEnd:   60,
+				Gender:   []Gender{Female, Male},
+				Country:  []string{"TWS"},
+				Platform: []Platform{Android, IOS},
+			},
+		},
+	}
+
+	code, errMsg, _ := createAd(vo)
+
+	if code != 400 {
+		t.Errorf("Expected code to be 400, got %d", code)
+	}
+	if errMsg != "value of Country does not exist" {
+		t.Errorf("Expected errMsg to be value of Country does not exist, got %s", errMsg)
+	}
+}
+
+func TestCreateAd_PlatformNotExists(t *testing.T) {
+	vo := CreateAdReqVo{
+		Title:   "Test Ad",
+		StartAt: time.Now(),
+		EndAt:   time.Now().Add(time.Hour * 24),
+		Conditions: []Condition{
+			{
+				AgeStart: 18,
+				AgeEnd:   60,
+				Gender:   []Gender{Female, Male},
+				Country:  []string{"TW"},
+				Platform: []Platform{"SCREEN"},
+			},
+		},
+	}
+
+	code, errMsg, _ := createAd(vo)
+
+	if code != 400 {
+		t.Errorf("Expected code to be 400, got %d", code)
+	}
+	if errMsg != "value of Platform does not exist" {
+		t.Errorf("Expected errMsg to be value of Platform does not exist, got %s", errMsg)
+	}
+}
+
 func TestCreateAd_EndAtShouldNotBeEarlierThanStartAt(t *testing.T) {
 	vo := CreateAdReqVo{
 		Title:   "Test Ad",
@@ -44,7 +122,7 @@ func TestCreateAd_EndAtShouldNotBeEarlierThanStartAt(t *testing.T) {
 				AgeStart: 18,
 				AgeEnd:   60,
 				Gender:   []Gender{Male, Female},
-				Country:  []Country{Taiwan},
+				Country:  []string{"TW"},
 				Platform: []Platform{Android, IOS},
 			},
 		},

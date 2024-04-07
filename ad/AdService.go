@@ -4,6 +4,7 @@ import (
 	"context"
 	"dcard/infra"
 	"encoding/json"
+	"errors"
 	"github.com/go-redis/redis/v8"
 	"log"
 	"math/rand"
@@ -14,6 +15,11 @@ import (
 func createAd(vo CreateAdReqVo) (int, string, int) {
 	if vo.EndAt.Before(vo.StartAt) {
 		return 400, "EndAt should not be earlier than StartAt", 0
+	}
+
+	err2 := checkConditionEnum(vo.Conditions)
+	if err2 != nil {
+		return 400, err2.Error(), 0
 	}
 
 	db, err := infra.GetDB()
@@ -51,6 +57,30 @@ func createAd(vo CreateAdReqVo) (int, string, int) {
 	}
 
 	return 0, "", adID
+}
+
+func checkConditionEnum(conditions []Condition) error {
+	for _, condition := range conditions {
+		for _, gender := range condition.Gender {
+			if gender != Male && gender != Female {
+				return errors.New("value of Gender does not exist")
+			}
+		}
+
+		for _, platform := range condition.Platform {
+			if platform != Android && platform != IOS && platform != Web {
+				return errors.New("value of Platform does not exist")
+			}
+		}
+
+		for _, country := range condition.Country {
+			if !CountryMap[country] {
+				return errors.New("value of Country does not exist")
+			}
+		}
+
+	}
+	return nil
 }
 
 func getAd(vo GetAdReqVo) (int, string, []map[string]interface{}) {

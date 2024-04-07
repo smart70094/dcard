@@ -15,7 +15,7 @@ func ConvertAdReqVoToAdConditions(vo CreateAdReqVo, adID int) []AdCondition {
 			AgeStart: condition.AgeStart,
 			AgeEnd:   condition.AgeEnd,
 			Gender:   convertGenderToStringSlice(condition.Gender),
-			Country:  convertCountryToStringSlice(condition.Country),
+			Country:  condition.Country,
 			Platform: convertPlatformToStringSlice(condition.Platform),
 			AdID:     adID, // 根据实际情况填充
 		}
@@ -27,14 +27,6 @@ func ConvertAdReqVoToAdConditions(vo CreateAdReqVo, adID int) []AdCondition {
 func convertGenderToStringSlice(genders []Gender) []string {
 	stringSlice := make([]string, len(genders))
 	for i, gender := range genders {
-		stringSlice[i] = string(gender)
-	}
-	return stringSlice
-}
-
-func convertCountryToStringSlice(countries []Country) []string {
-	stringSlice := make([]string, len(countries))
-	for i, gender := range countries {
 		stringSlice[i] = string(gender)
 	}
 	return stringSlice
