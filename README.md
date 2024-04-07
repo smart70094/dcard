@@ -99,8 +99,11 @@ Test Tool：Postman、K6
 多數實作風格方式是參考 Uncle Bob 相關書籍
 - package 以 by feature 設計，以模組為主建立資料夾，能快速清楚了解專案模組架構與藉由package來限制方法被存取的使用範圍
 - Handler 主要職責為分發工作
-- Converter 與外部交互的資料格式會由這一層處理
+- Converter 與外部交互的資料格式轉換會由這一層處理
 - Service 主要處理邏輯
 - Dao 處理資料庫相關工作
 - Util 額外共用程式碼
+
+### 測試
+- 以 http status 200 與 400 錯誤為主要測試項目，確保程式碼在功能正確性上沒問題
 
