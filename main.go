@@ -7,7 +7,10 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.POST("/ad", ad.CreateAd)
-	r.GET("/ad", ad.GetAd)
-	r.Run(":8080")
+	r.POST("/api/v1/ad", ad.CreateAd)
+	r.GET("/api/v1/ad", ad.GetAd)
+	err := r.Run(":8080")
+	if err != nil {
+		panic(err.Error())
+	}
 }
