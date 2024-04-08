@@ -60,13 +60,14 @@ Test Tool：Postman、K6 <br>
 
 ### 流程
 #### Create Ad API 流程
-![](https://drive.google.com/u/2/uc?id=14mH75y8GhZ7yUPkL5iPT2SSE_50yLcWP&export=download)
+![](https://drive.google.com/u/2/uc?id=1iH49N7gWjlGr5cYMcOHiTb0c0Fc6bwQV&export=download)
 - 檢查資料合法性
 - 將資料寫入 Ad 與  AdCondition 表
 - 若有錯誤則透過事務 Rollback
+- 成功提交事務
 #### Get Ad API 流程
 <p align="center">
-    <img src="https://drive.google.com/u/2/uc?id=1N0rsANCv-qSmgTzkoI0LiwugCATkca3R&export=download" />
+    <img src="https://drive.google.com/u/2/uc?id=1Q4P1nGAZXUESv4tUZRBisrxFejH2MqpP&export=download" />
 </p> <br>
 
 - 每日清除所有緩存，並且重新 Eager Loading 將活躍廣告寫入至 hot data table 供後續資料庫查詢使用 
@@ -97,7 +98,7 @@ Test Tool：Postman、K6 <br>
 ### 可讀性
 ![](https://drive.google.com/u/2/uc?id=1zK3B142B8vftbr0p1A85Rd6o6CTMqvKN&export=download)
 
-多數實作風格方式是參考 Uncle Bob 相關書籍
+上述是我元件的調用架構圖，多數實作風格方式是過往參考 Uncle Bob 相關書籍
 - package 以 by feature 設計，以模組為主建立資料夾，能快速清楚了解專案模組架構與藉由package來限制方法被存取的使用範圍
 - Handler 主要職責為分發工作
 - Converter 與外部交互的資料格式轉換會由這一層處理
