@@ -1,17 +1,17 @@
 # Dcard Ad API
 
 ## 開發環境
-OS：Windows 10
-Database：PostgreSQL、Redis (由 Docker 管理)
-IDE：Goland
-Test Tool：Postman、K6
+OS：Windows 10 <br>
+Database：PostgreSQL、Redis (由 Docker 管理) <br>
+IDE：Goland <br>
+Test Tool：Postman、K6 <br>
 
 ## 設計
 ### 基礎架構
 ![](https://drive.google.com/u/2/uc?id=1BrIZw3UwW3FRL8eU_FvTH2DHUpOlvQAK&export=download)
 ### ER Model
 ![](https://drive.google.com/u/2/uc?id=1w4b1ztXmgL8KP7mh-rYxCmAmJhJ05OSD&export=download)
-- 熱門緩存資料雖違反正規化，但在廣告資料資料眾多時，因主要侷限範圍都在熱門緩存資料表，而筆數又是固定，查詢速度將不會随之增加
+- 熱門緩存資料雖違反正規化表，但在廣告資料資料眾多時，因查詢主要侷限範圍都在熱門緩存資料表，而筆數又小於1000，查詢速度將不會随之增加
 
 #### Ad Table
 存放廣告資料
@@ -67,15 +67,16 @@ Test Tool：Postman、K6
 #### Get Ad API 流程
 <p align="center">
     <img src="https://drive.google.com/u/2/uc?id=1N0rsANCv-qSmgTzkoI0LiwugCATkca3R&export=download" />
-</p>
-- Eager Loading 將活躍廣告寫入至 hot data table 供後續資料庫查詢使用
-- 因題目無特別要求，因此此處忽略當天投放的廣告，廣告投放後隔天才會生效，此限制能大幅提升緩存效果
-- 因不在 API 的範圍此流程為示意使用
+</p> <br>
+
+- 每日清除所有緩存，並且重新 Eager Loading 將活躍廣告寫入至 hot data table 供後續資料庫查詢使用 
+- 因題目無特別要求，因此當天投放的廣告將不會生效，廣告投放後隔天才會生效，此限制能大幅提升緩存效果
+- 此流程因不在 API 的範圍，因此只流程圖示意，無排程實做
 
 ![](https://drive.google.com/u/2/uc?id=1Gjsjsqsc5qafWmcReNUMRDQgzQiXJqC6&export=download)
 - 將請求的內容值依順序串接得到一組唯一值供後續查詢使用
 - 緩存設計為 Local Memory 與 Redis 緩存，透過上述的唯一值存取
-- 考量緩存穿透問題，導致查詢請求都跑到資料庫，透過分散式鎖與有限度的自璇鎖來初始化Redis資料與等待初始化處理
+- 考量緩存穿透問題，導致查詢請求都跑到資料庫，透過分散式鎖與有限度的自璇鎖來初始化Redis資料與等待資料初始化處理
 - 有限度的自璇鎖，每次等待時間會指數型增加分別為100、200、400ms，且會亂數加上0-100 ms
 
 ## 評分
@@ -91,7 +92,7 @@ Test Tool：Postman、K6
 - 以資料已熱加載為前提，個人電腦處理的處理量達6595/s
 - 使用生產環境的計算能力依規格是有機會單台突破10000/s
 - Local Memory 的 Cache若都被擊中，則 Server 之間的資源是獨立的，互不相影響，因此使用 Server Cluster，僅管生產環境的計算能力與個人電腦相同，也可很快破10000/s
-- 若 Server Cluster 的 Local Memory 沒被擊中，也有 redis 緩存，快速同步結果到Local Memory
+- 若 Server Cluster 的 Local Memory 沒被擊中，也有 redis 緩存，快速同步結果到每台 Server 的 Local Memory
 
 ### 可讀性
 ![](https://drive.google.com/u/2/uc?id=1zK3B142B8vftbr0p1A85Rd6o6CTMqvKN&export=download)
