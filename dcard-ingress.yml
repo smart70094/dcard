@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dcard-ingress
+spec:
+  rules:
+    - host: localhost  # 設置主機名
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dcard-app-service   # 指定要導向的 Service 名稱
+                port:
+                  number: 8080       # Service 的端口

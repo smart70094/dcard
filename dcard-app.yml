@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dcard-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dcard-app
+  template:
+    metadata:
+      labels:
+        app: dcard-app
+    spec:
+      containers:
+        - name: dcard-app
+          image: dcard-image
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: dcard-app-service
+spec:
+  selector:
+    app: dcard-app    # 指定要導向流量的 Pod 的標籤
+  ports:
+    - protocol: TCP
+      port: 8080      # Service 的端口
+      targetPort: 8080   # 將流量導向到 Pod 的端口
